@@ -11,26 +11,45 @@ from tqdm import tqdm
 
 parser = argparse.ArgumentParser(description='Certify with FastCertify')
 
-# prepare data, model, output file
-parser.add_argument("dataset", default='cifar10', help="which dataset")
-parser.add_argument("base_classifier", type=str, default='./base/cifar10/', help="path to saved pytorch model of base classifier")
-parser.add_argument("sigma", type=float, default=0.5, help="noise hyperparameter")
-parser.add_argument("outfile", type=str, default='./output/cifar10/', help="output file")
+# # prepare data, model, output file
+# parser.add_argument("dataset", default='cifar10', help="which dataset")
+# parser.add_argument("base_classifier", type=str, default='./base/cifar10/', help="path to saved pytorch model of base classifier")
+# parser.add_argument("sigma", type=float, default=0.5, help="noise hyperparameter")
+# parser.add_argument("outfile", type=str, default='./output/cifar10/', help="output file")
 
-# hyperparameters for sample size planning
-parser.add_argument("--loss_type", choices=['absolute', 'relative'], default='relative', help="loss type")
-parser.add_argument("--max_loss", type=float, default=0.01, help="the tolerable loss of certified radius")
-parser.add_argument("--batch_size", type=int, default=200, help="batch size")
-parser.add_argument("--max_size", type=int, default=200, help="the maximum sample size")
-parser.add_argument('--n0', type=int, default=10, help='the sample size for FastCertify')
-parser.add_argument("--alpha", type=float, default=0.001, help="failure probability")
+# # hyperparameters for sample size planning
+# parser.add_argument("--loss_type", choices=['absolute', 'relative'], default='relative', help="loss type")
+# parser.add_argument("--max_loss", type=float, default=0.01, help="the tolerable loss of certified radius")
+# parser.add_argument("--batch_size", type=int, default=200, help="batch size")
+# parser.add_argument("--max_size", type=int, default=200, help="the maximum sample size")
+# parser.add_argument('--n0', type=int, default=10, help='the sample size for FastCertify')
+# parser.add_argument("--alpha", type=float, default=0.001, help="failure probability")
 
-# hyperparameters for the input iteration
-parser.add_argument("--skip", type=int, default=1, help="how many examples to skip")
-parser.add_argument("--max", type=int, default=-1, help="stop after this many examples")
-parser.add_argument("--split", choices=["train", "test"], default="test", help="train or test set")
-args = parser.parse_args()
-print(args)
+# # hyperparameters for the input iteration
+# parser.add_argument("--skip", type=int, default=1, help="how many examples to skip")
+# parser.add_argument("--max", type=int, default=-1, help="stop after this many examples")
+# parser.add_argument("--split", choices=["train", "test"], default="test", help="train or test set")
+# args = parser.parse_args()
+# print(args)
+
+class my_args:
+    def __init__(self, dataset, base_classifier, sigma, outfile, loss_type, max_loss, batch_size, n0, alpha, skip, max, split):
+        self.dataset = dataset
+        self.base_classifier = base_classifier
+        self.sigma = sigma
+        self.outfile = outfile
+        self.loss_type = loss_type
+        self.max_loss = max_loss
+        self.batch_size = batch_size
+        self.n0 = n0
+        self.alpha = alpha
+        self.skip = skip
+        self.max = max
+        self.split = split
+
+cur_args = my_args("cifar10", "./base_model/cifar10/", 0.5, "./output/cifar10/", "relative", 200, 200, 10, 0.001, 1, 1, "test")
+args = cur_args
+args
 
 
 def _sample_noise(base_classifier, num_classes, x: torch.tensor, sigma: float, batchnum: int, batch_size) -> np.ndarray:
